@@ -1,0 +1,166 @@
+version: 2
+
+models:
+  - name: stg_tipoidentificacion
+    description: Catálogo de tipos de identificación, limpiado desde dbt_raw.
+    columns:
+      - name: id_tipo_identificacion
+        tests: [unique, not_null]
+
+  - name: stg_ciudad
+    description: Catálogo de ciudades.
+    columns:
+      - name: id_ciudad
+        tests: [unique, not_null]
+
+  - name: stg_avion
+    description: Catálogo de aviones de la flota.
+    columns:
+      - name: id_avion
+        tests: [unique, not_null]
+
+  - name: stg_tipovuelo
+    description: Catálogo de tipo de vuelo (programado / no programado).
+    columns:
+      - name: id_tipo_vuelo
+        tests: [unique, not_null]
+
+  - name: stg_aeropuerto
+    description: Catálogo de aeropuertos, cada uno asociado a una ciudad.
+    columns:
+      - name: id_aeropuerto
+        tests: [unique, not_null]
+      - name: id_ciudad
+        tests:
+          - relationships:
+              to: ref('stg_ciudad')
+              field: id_ciudad
+
+  - name: stg_descuento
+    description: Catálogo de descuentos con su vigencia (fecha_inicio/fecha_fin).
+    columns:
+      - name: id_descuento
+        tests: [unique, not_null]
+
+  - name: stg_cliente
+    description: >
+      Clientes de la aerolínea, limpiados y con nombre_completo
+      reconstruido a partir de primer/segundo nombre y apellido.
+    columns:
+      - name: id_cliente
+        tests: [unique, not_null]
+      - name: id_tipo_identificacion
+        tests:
+          - relationships:
+              to: ref('stg_tipoidentificacion')
+              field: id_tipo_identificacion
+      - name: id_ciudad_residencia
+        tests:
+          - relationships:
+              to: ref('stg_ciudad')
+              field: id_ciudad
+      - name: genero
+        tests:
+          - accepted_values:
+              values: ['M', 'F']
+
+  - name: stg_empleado
+    description: >
+      Empleados de la aerolínea. Corrige el defecto de origen donde
+      segundo nombre/apellido llegan como el string 'NULL' en vez de
+      NULL real, y deriva es_tripulante y antiguedad_dias.
+    columns:
+      - name: id_empleado
+        tests: [unique, not_null]
+      - name: id_tipo_identificacion
+        tests:
+          - relationships:
+              to: ref('stg_tipoidentificacion')
+              field: id_tipo_identificacion
+      - name: id_ciudad_residencia
+        tests:
+          - relationships:
+              to: ref('stg_ciudad')
+              field: id_ciudad
+      - name: genero
+        tests:
+          - accepted_values:
+              values: ['M', 'F']
+
+  - name: stg_vuelo
+    description: >
+      Vuelos operados o programados. hora_realizacion_time es la versión
+      parseada como TIME (NULL si el vuelo aún no tiene hora asignada).
+    columns:
+      - name: id_vuelo
+        tests: [unique, not_null]
+      - name: id_aeropuerto_origen
+        tests:
+          - relationships:
+              to: ref('stg_aeropuerto')
+              field: id_aeropuerto
+      - name: id_aeropuerto_destino
+        tests:
+          - relationships:
+              to: ref('stg_aeropuerto')
+              field: id_aeropuerto
+      - name: id_avion
+        tests:
+          - relationships:
+              to: ref('stg_avion')
+              field: id_avion
+      - name: id_tipo_vuelo
+        tests:
+          - relationships:
+              to: ref('stg_tipovuelo')
+              field: id_tipo_vuelo
+      - name: estado
+        tests:
+          - accepted_values:
+              values: ['Finalizado', 'En Vuelo', 'Desembarcando', 'Pendiente']
+
+  - name: stg_billete_especial
+    description: >
+      Billetes especiales (cupón abierto) asignados a empleados. Grano:
+      un billete especial por fila.
+    columns:
+      - name: id_billete_especial
+        tests: [unique, not_null]
+      - name: id_empleado
+        tests:
+          - relationships:
+              to: ref('stg_empleado')
+              field: id_empleado
+      - name: id_vuelo
+        tests:
+          - relationships:
+              to: ref('stg_vuelo')
+              field: id_vuelo
+
+  - name: stg_billete_normal
+    description: >
+      Billetes normales, comprados por un cliente o por un empleado
+      viajando como particular (es_para_empleado). Grano: un billete
+      normal por fila.
+    columns:
+      - name: id_billete_normal
+        tests: [unique, not_null]
+      - name: id_vuelo
+        tests:
+          - relationships:
+              to: ref('stg_vuelo')
+              field: id_vuelo
+
+  - name: stg_aplicaciondescuento_billete
+    description: Aplicación de un descuento a un billete normal específico.
+    columns:
+      - name: id_billete_normal
+        tests:
+          - relationships:
+              to: ref('stg_billete_normal')
+              field: id_billete_normal
+      - name: id_descuento
+        tests:
+          - relationships:
+              to: ref('stg_descuento')
+              field: id_descuento
