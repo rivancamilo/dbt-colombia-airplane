@@ -1,0 +1,20 @@
+version: 2
+
+sources:
+  - name: dbt_raw
+    database: datalakeHabi
+    schema: dbt_raw
+    description: Capa Raw de Colombia Airplane.
+    tables:
+      - name: tipoidentificacion
+      - name: ciudad
+      - name: cliente
+      - name: avion
+      - name: tipovuelo
+      - name: aeropuerto
+      - name: empleado
+      - name: vuelo
+      - name: descuento
+      - name: billeteespecial
+      - name: billetenormal
+      - name: aplicaciondescuento_billete
