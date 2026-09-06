@@ -1,0 +1,58 @@
+
+version: 2
+
+models:
+  - name: dim_fecha
+    description: Dimensión de fecha (rol múltiple, usada por fact_vuelo y fact_billete).
+    columns:
+      - name: date_day
+        tests: [unique, not_null]
+
+  - name: dim_cliente
+    description: Un registro por cliente, con nombre completo reconstruido y ciudad/tipo de identificación desnormalizados.
+    columns:
+      - name: id_cliente
+        tests: [unique, not_null]
+
+  - name: dim_empleado
+    description: >
+      Un registro por empleado, incluye es_tripulante y antiguedad_dias
+      (reemplaza la vista Oracle TIEMPO_ANTIGUEDAD_EMPLEADO).
+    columns:
+      - name: id_empleado
+        tests: [unique, not_null]
+
+  - name: dim_avion
+    description: Un registro por avión de la flota.
+    columns:
+      - name: id_avion
+        tests: [unique, not_null]
+
+  - name: dim_ciudad
+    description: Catálogo de ciudades.
+    columns:
+      - name: id_ciudad
+        tests: [unique, not_null]
+
+  - name: dim_aeropuerto
+    description: Un registro por aeropuerto, con la ciudad ya resuelta.
+    columns:
+      - name: id_aeropuerto
+        tests: [unique, not_null]
+      - name: id_ciudad
+        tests:
+          - relationships:
+              to: ref('dim_ciudad')
+              field: id_ciudad
+
+  - name: dim_tipo_vuelo
+    description: Catálogo de tipo de vuelo (programado / no programado).
+    columns:
+      - name: id_tipo_vuelo
+        tests: [unique, not_null]
+
+  - name: dim_descuento
+    description: Catálogo de descuentos, con vigente_actualmente calculado.
+    columns:
+      - name: id_descuento
+        tests: [unique, not_null]

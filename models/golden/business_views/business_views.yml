@@ -1,0 +1,33 @@
+
+version: 2
+
+models:
+  - name: vw_01_aviones_top_vuelos_periodo
+    description: "Q1: aviones con más vuelos en los últimos var('dias_periodo') días. Generaliza la vista Oracle VUELOS_ULTIMO_MES."
+  - name: vw_02_rutas_mas_frecuentes
+    description: "Q2: rutas (origen -> destino) con más vuelos."
+  - name: vw_03_ciudades_mayor_trafico
+    description: "Q3: ciudades con más tráfico, como origen o destino."
+  - name: vw_04_vuelos_por_estado_tipo
+    description: "Q4: distribución mensual de vuelos por estado y tipo de vuelo."
+  - name: vw_05_ocupacion_avion_por_vuelo
+    description: "Q5: ocupación (billetes vendidos / capacidad) por vuelo."
+  - name: vw_06_clientes_frecuentes
+    description: "Q6: clientes con más billetes normales comprados."
+  - name: vw_07_ingresos_por_mes_ruta_avion
+    description: "Q7: ingresos (valor final) por mes, ruta y avión."
+  - name: vw_08_clientes_por_ciudad
+    description: "Q8: cantidad de clientes por ciudad de residencia."
+  - name: vw_09_valor_promedio_billete_ruta
+    description: "Q9: valor promedio de billete normal por ruta."
+  - name: vw_10_descuentos_mas_aplicados
+    description: "Q10: descuentos más aplicados y su valor total."
+  - name: vw_11_pct_billetes_con_descuento
+    description: "Q11: porcentaje de billetes normales con algún descuento aplicado."
+  - name: vw_12_empleados_uso_billetes
+    description: "Q12: empleados que más usan billete especial o compran billete normal como particulares."
+  - name: vw_13_ocupacion_empleados_vuelo
+    description: >
+      Q13: tripulantes vs. no tripulantes por vuelo y regla_cumplida
+      (<=10 total, <=5 tripulantes). Reemplaza el trigger Oracle
+      INS_BILLETE_ESP y la tabla auxiliar RecuentoBilletesXVuelo.

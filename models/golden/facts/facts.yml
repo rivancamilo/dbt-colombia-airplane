@@ -1,0 +1,71 @@
+version: 2
+
+models:
+  - name: fact_vuelo
+    description: >
+      Grano: un vuelo por fila. total_billetes_vendidos y factor_ocupacion
+      se agregan desde fact_billete.
+    columns:
+      - name: id_vuelo
+        tests: [unique, not_null]
+      - name: id_avion
+        tests:
+          - relationships:
+              to: ref('dim_avion')
+              field: id_avion
+      - name: id_aeropuerto_origen
+        tests:
+          - relationships:
+              to: ref('dim_aeropuerto')
+              field: id_aeropuerto
+      - name: id_aeropuerto_destino
+        tests:
+          - relationships:
+              to: ref('dim_aeropuerto')
+              field: id_aeropuerto
+      - name: id_tipo_vuelo
+        tests:
+          - relationships:
+              to: ref('dim_tipo_vuelo')
+              field: id_tipo_vuelo
+      - name: date_day
+        tests:
+          - relationships:
+              to: ref('dim_fecha')
+              field: date_day
+
+  - name: fact_billete
+    description: >
+      Grano: un billete por fila, UNION ALL de billete especial (empleado,
+      cupón abierto, sin tarifa) y billete normal (cliente, o empleado
+      viajando como particular). tipo_billete distingue el origen.
+    columns:
+      - name: id_billete
+        tests: [unique, not_null]
+      - name: tipo_billete
+        tests:
+          - accepted_values:
+              values: ['ESPECIAL', 'NORMAL']
+      - name: id_vuelo
+        tests:
+          - relationships:
+              to: ref('fact_vuelo')
+              field: id_vuelo
+      - name: id_cliente
+        tests:
+          - relationships:
+              to: ref('dim_cliente')
+              field: id_cliente
+              where: "id_cliente is not null"
+      - name: id_empleado
+        tests:
+          - relationships:
+              to: ref('dim_empleado')
+              field: id_empleado
+              where: "id_empleado is not null"
+      - name: id_descuento
+        tests:
+          - relationships:
+              to: ref('dim_descuento')
+              field: id_descuento
+              where: "id_descuento is not null"
