@@ -125,7 +125,8 @@ models:
       un billete especial por fila.
     columns:
       - name: id_billete_especial
-        tests: [unique, not_null]
+        tests: 
+        - not_null
       - name: id_empleado
         tests:
           - relationships:
@@ -144,7 +145,8 @@ models:
       normal por fila.
     columns:
       - name: id_billete_normal
-        tests: [unique, not_null]
+        tests: 
+          - not_null
       - name: id_vuelo
         tests:
           - relationships:

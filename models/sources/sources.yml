@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: dbt_raw
-    database: datalakeHabi
+    database: datalakehabi
     schema: dbt_raw
     description: Capa Raw de Colombia Airplane.
     tables:
