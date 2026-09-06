@@ -41,7 +41,7 @@ models:
     silver:
       +materialized: table
       +schema: dbt_silver
-    gold:
+    golden:
       dimensions:
         +materialized: table
         +schema: dbt_gold
